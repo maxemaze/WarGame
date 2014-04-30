@@ -4,12 +4,12 @@ import java.util.Scanner;
 
 public class WarGame
 {
-	Deck deck;
-	CardPile p1, p2;
-	CardPile stack;
-	boolean winner = false;
-	String whoWins;
-	static int turns = 0;
+	private Deck deck;
+	private CardPile p1, p2;
+	private CardPile stack;
+	private boolean winner = false;
+	private boolean inWar = false;
+	private String whoWins;
 	
 	public WarGame()
 	{
@@ -50,7 +50,92 @@ public class WarGame
 		return stack;
 	}
 	
-	public void flip()
+	public CardPile flip()
+	{
+		if(p1.cardsLeft()==0 || (inWar && p1.cardsLeft()<=1))
+		{
+			winner = true;
+			whoWins = "P2";
+		}
+		else if(p2.cardsLeft()==0 || (inWar && p2.cardsLeft()<=1))
+		{
+			winner = true;
+			whoWins = "P1";
+		}
+		else
+		{
+			//if(!inWar)
+			//	stack.getCardlist().clear();
+			Card play1 = draw(p1);
+			Card play2 = draw(p2);
+			CardPile drawn = new CardPile(play1, play2);
+			stack.addToTop(drawn);
+			return drawn;
+		}
+		return null;
+	}
+	
+	public boolean checkWar()
+	{
+		Card cardP1 = stack.getCard(1);
+		Card cardP2 = stack.getCard(0);
+		System.out.println("P1 card: "+cardP1+" \nP2 card: "+cardP2);
+		
+		if(cardP1.isBiggerThan(cardP2))
+		{
+			p1.addToBottom(stack);
+			if(!inWar)
+				System.out.print("  p1 wins battle.");
+			else
+				System.out.print("  p1 wins the war!");
+			System.out.println(" p1 gets "+stack.cardsLeft()+" cards");
+			System.out.println(" P1 cards: "+p1.cardsLeft()+"\n P2 cards: "+p2.cardsLeft()+"\n total: "+(p1.cardsLeft()+p2.cardsLeft()));	
+			stack.getCardlist().clear();
+			inWar = false;
+			return inWar;
+		}
+		else if(cardP2.isBiggerThan(cardP1))
+		{
+			p2.addToBottom(stack);
+			if(!inWar)
+				System.out.print("  p2 wins battle.");
+			else
+				System.out.print("  p2 wins the war!");
+			System.out.println(" p2 gets "+stack.cardsLeft()+" cards");
+			System.out.println(" P1 cards: "+p1.cardsLeft()+"\n P2 cards: "+p2.cardsLeft()+"\n total: "+(p1.cardsLeft()+p2.cardsLeft()));
+			stack.getCardlist().clear();
+			inWar = false;
+			return inWar;
+		}
+		else
+		{
+			inWar = true;
+			System.out.println("war city");
+			return inWar;
+			//stack.addToTop(trueWar());
+		}
+	}
+	
+	public CardPile war()
+	{
+		inWar = true;
+		CardPile warCards =  new CardPile(stack);
+		CardPile tempPile = flip();
+		if(tempPile!=null)
+			warCards.addToTop(tempPile);
+		
+		tempPile = flip();
+		if(tempPile!=null)
+			warCards.addToTop(tempPile);
+		
+		System.out.println(" P1 cards: "+p1.cardsLeft()+"\n P2 cards: "+p2.cardsLeft()+"\n total: "+(p1.cardsLeft()+p2.cardsLeft()));
+
+		inWar = false;
+		
+		return warCards;
+	}
+	
+	public CardPile fakeFlip()
 	{
 		if(p1.cardsLeft()==0)
 		{
@@ -64,35 +149,43 @@ public class WarGame
 		}
 		else
 		{
-			Card play1 = draw(p1);
-			Card play2 = draw(p2);
-			stack.addToTop(new CardPile(play1, play2));
-			System.out.println("P1 card: "+play1+" P2 card: "+play2);
-			System.out.println("stack: "+stack.cardsLeft());
-			
-			if(play1.isBiggerThan(play2))
+			if(!inWar)
 			{
-				p1.addToBottom(stack);
-				System.out.println("p1 wins battle");
-			}
-			else if(play2.isBiggerThan(play1))
-			{
-				p2.addToBottom(stack);
-				System.out.println("p2 wins battle");
+				stack.getCardlist().clear();
+				Card play1 = draw(p1);
+				Card play2 = draw(p2);
+				stack.addToTop(new CardPile(play1, play2));
+				System.out.println("P1 card: "+play1+" P2 card: "+play2);
+				System.out.println("stack: "+stack.cardsLeft());
+				
+				if(play1.isBiggerThan(play2))
+				{
+					p1.addToBottom(stack);
+					System.out.println("p1 wins battle");
+				}
+				else if(play2.isBiggerThan(play1))
+				{
+					p2.addToBottom(stack);
+					System.out.println("p2 wins battle");
+				}
+				else
+				{
+					System.out.println("war city");
+					stack.addToTop(fakeWar());
+				}
+				
+
+				System.out.println("P1 cards: "+p1.cardsLeft());
+				System.out.println("P2 cards: "+p2.cardsLeft());
+				System.out.println("total: "+(p1.cardsLeft()+p2.cardsLeft())+"\n");
 			}
 			else
 			{
-				System.out.println("war city");
-				war(stack);
+				
 			}
-			
-			stack.getCardlist().clear();
-			System.out.println("P1 cards: "+p1.cardsLeft());
-			System.out.println("P2 cards: "+p2.cardsLeft());
-			System.out.println("total: "+(p1.cardsLeft()+p2.cardsLeft())+"\n");
-			turns++;
 		}
 
+		return stack;
 	}
 		
 	/**
@@ -100,16 +193,17 @@ public class WarGame
 	 * It relies on the boolean winner to keep track if either player runs out during the war.
 	 * @param warCards the two drawn cards with the same rank that started the war
 	 */
-	public void war(CardPile warCards)
+	public CardPile fakeWar()
 	{
+		inWar = true;
 		//P1 draws two cards. if this doesn't cause an endgame situation (having 1 or 0 cards entering a war) then P2 gets to draw2
 		//if P1 runs out of cards then P2 wins
-		warCards.addToTop(draw2(p1));
+		stack.addToTop(draw2(p1));
 		System.out.println("P1 cards: "+p1.cardsLeft());
 		if(!winner)
 		{
-			warCards.addToTop(draw2(p2));
-			System.out.println("P1 cards: "+p2.cardsLeft());
+			stack.addToTop(draw2(p2));
+			System.out.println("P2 cards: "+p2.cardsLeft());
 				
 			//P2 might run out of cards during their draw2 so check again to see if anyone's run out
 			//if so, P1 wins. if not, check if someone gets the pile.
@@ -119,25 +213,25 @@ public class WarGame
 				//the most recent card on the pile (index 0) is P2's face up card, and P1's face up card is +2 indices from P2's
 				//so, as long as either player doesn't run out of cards and they keep drawing the same rank face up, 
 				//they will continue to draw2 from their hands and add them to the warCards pile
-				if(warCards.getCard(0).equals(warCards.getCard(2)) && !winner)
+				if(stack.getCard(0).equals(stack.getCard(2)) && !winner)
 				{
 					System.out.println("more war");
-					war(warCards);
+					fakeFlip();
 				}
 				else
 				{
 					//so now if there's no more equal ranking face up cards, 
 					//check if P2's card is bigger-- if so, P2 gets the pile and the method exits
 					//if not, check if P1's card is bigger. if so, P1 gets the pile and the method exits
-					if(warCards.getCard(0).isBiggerThan(warCards.getCard(2)))
+					if(stack.getCard(0).isBiggerThan(stack.getCard(2)))
 					{
-						p2.addToBottom(warCards);
-						System.out.println("P2 wins the war and gets "+warCards.cardsLeft()+" cards");
+						p2.addToBottom(stack);
+						System.out.println("P2 wins the war and gets "+stack.cardsLeft()+" cards");
 					}
-					else if(warCards.getCard(2).isBiggerThan(warCards.getCard(0)))
+					else if(stack.getCard(2).isBiggerThan(stack.getCard(0)))
 					{
-						p1.addToBottom(warCards);
-						System.out.println("P1 wins the war and gets "+warCards.cardsLeft()+" cards");
+						p1.addToBottom(stack);
+						System.out.println("P1 wins the war and gets "+stack.cardsLeft()+" cards");
 					}
 				}
 			}
@@ -146,6 +240,8 @@ public class WarGame
 		}
 		else
 			whoWins = "P2";
+		inWar = false;
+		return stack;
 	}
 	
 	public boolean getWinner()
@@ -158,19 +254,31 @@ public class WarGame
 		return whoWins;
 	}
 	
-	
 	public static void main(String[] args)
 	{
 		WarGame game = new WarGame();
-		Scanner scan = new Scanner(System.in);
-		
-		while(!game.getWinner())
+		//Scanner scan = new Scanner(System.in);
+		int turns = 0;
+		do
 		{
-			//for(int i=0; i<40; i++)
-				game.flip();
-			scan.nextLine();
-		}
-		System.out.println(turns);
+			if(game.flip()!=null)
+			{
+				while(game.checkWar() && !game.getWinner())
+				{
+					game.war();
+					game.flip();
+				}
+			}
+			turns++;
+		}while(!game.getWinner() && turns <=500);
+		
+//		while(!game.getWinner())
+//		{
+//			//for(int i=0; i<40; i++)
+//				game.flip();
+//			scan.nextLine();
+//		}
+		System.out.println(game.getWhoWins()+" won in "+turns+" turns");
 
 	}
 
