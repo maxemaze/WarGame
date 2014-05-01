@@ -1,17 +1,22 @@
-package hw10;
+/*
+ * Maxe Mazelis
+ * CS 110
+ * the GUI driver for the WarGame class. the layout is built using the GridBagLayout manager. 
+ * I'm not sure if it's covered in the textbook but I thought I would take a risk.
+ */
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
+
 
 public class WarGUI extends JFrame
 {
 	private WarGame game;
 	private JPanel layout = new JPanel(new GridBagLayout());
-	private GridBagConstraints c, p1HandC, titleC, p1CardC, warStack1C, warStack2C, p2HandC, p2CardC, flipButtonC, turnLabelC, blank2C;
-	private JLabel p1Hand, p2Hand, title, p1Card, p2Card, warStack1, warStack2, turnLabel, blank2;
+	private GridBagConstraints p1HandC, titleC, p1CardC, warStack1C, warStack2C, p2HandC, p2CardC, flipButtonC, turnLabelC;
+	private JLabel p1Hand, p2Hand, title, p1Card, p2Card, warStack1, warStack2, turnLabel;
 	private JButton flipButton;
 	
 	private boolean shortGame;
@@ -22,7 +27,6 @@ public class WarGUI extends JFrame
 		super("WAR GAME");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		
 		game = new WarGame();
 		turns = 0;		
 		shortGame = false;
@@ -30,18 +34,16 @@ public class WarGUI extends JFrame
 		p1Hand = new JLabel(game.getP1().getCard(0).getBack(), JLabel.CENTER);
 		p2Hand = new JLabel(game.getP2().getCard(0).getBack(), JLabel.CENTER);
 		title = new JLabel("war the card game",JLabel.CENTER);
-		p1Card = new JLabel("",new ImageIcon("src/hw10/pictures/games.jpg"),JLabel.CENTER);
+		p1Card = new JLabel("",new ImageIcon("pix/games.jpg"),JLabel.CENTER);
 		p1Card.setHorizontalAlignment(JLabel.RIGHT);
-		p2Card = new JLabel("",new ImageIcon("src/hw10/pictures/games.jpg"),JLabel.CENTER);
+		p2Card = new JLabel("",new ImageIcon("pix/games.jpg"),JLabel.CENTER);
 		warStack1 = new JLabel("",JLabel.CENTER);
 		warStack2 = new JLabel("",JLabel.CENTER);
 		turnLabel = new JLabel(""+turns,JLabel.CENTER);
-		blank2 =new JLabel(new ImageIcon("src/hw10/pictures/games.jpg"));
 		flipButton  = new JButton("flip");
 		flipButton.addActionListener(new ButtonListener());
 		 
 		setConstraints();
-		
 		layout.add(p1Hand, p1HandC);
 		layout.add(p2Hand, p2HandC);
 		layout.add(title, titleC);
@@ -51,7 +53,6 @@ public class WarGUI extends JFrame
 		layout.add(warStack1, warStack1C);
 		layout.add(warStack2, warStack2C);
 		layout.add(turnLabel, turnLabelC);
-//		layout.add(blank2, blank2C);
 		
 		add(layout);
 		pack();
@@ -62,14 +63,11 @@ public class WarGUI extends JFrame
 	
 	public void setConstraints()
 	{
-		c = new GridBagConstraints();		
-		
 		p1HandC = new GridBagConstraints();
 		p1HandC.gridx=0;
 		p1HandC.gridy=0;
 		p1HandC.gridwidth=2;
 		p1HandC.ipadx = 3;
-		//p1HandC.ipady = 3;
 		p1HandC.weightx=.3;
 
 		titleC = new GridBagConstraints();
@@ -84,7 +82,6 @@ public class WarGUI extends JFrame
 		p1CardC.gridwidth = 1;
 		p1CardC.fill = GridBagConstraints.NONE;
 		p1CardC.insets = new Insets(2,3,2,3);
-		//p1CardC.ipady = 3;
 		p1CardC.anchor=GridBagConstraints.LINE_END;
 		p1CardC.weightx=.5;
 		
@@ -94,28 +91,22 @@ public class WarGUI extends JFrame
 		p2CardC.gridwidth = 1;
 		p2CardC.fill = GridBagConstraints.NONE;
 		p2CardC.insets = new Insets(2,3,2,3);
-		//p2CardC.ipadx = 3;
-		//p2CardC.ipady = 3;
 		
 		warStack1C = new GridBagConstraints();
 		warStack1C.gridx = 2;
 		warStack1C.gridy = 1;
 		p2CardC.insets = new Insets(2,3,2,3);
-		
-		
+				
 		warStack2C = new GridBagConstraints();
 		warStack2C.gridx = 3;
 		warStack2C.gridy = 1;
 		p2CardC.insets = new Insets(2,3,2,3);
-		
-		
-		//p2HandC = (GridBagConstraints) p1HandC.clone();
+				
 		p2HandC = new GridBagConstraints();
 		p2HandC.gridx = 0;
 		p2HandC.gridy = 2;
 		p2HandC.gridwidth = 2;
 		p2HandC.ipadx = 3;
-		//p2HandC.ipady = 3;
 		p2HandC.weightx = .5;
 		
 		flipButtonC = new GridBagConstraints();
@@ -123,15 +114,9 @@ public class WarGUI extends JFrame
 		flipButtonC.gridy=2;
 		flipButtonC.fill = GridBagConstraints.HORIZONTAL;
 
-
-		
 		turnLabelC = new GridBagConstraints();
 		turnLabelC.gridx=3;
 		turnLabelC.gridy=2;
-//		
-//		blank2C = new GridBagConstraints();
-//		blank2C.gridx=4;
-//		blank2C.gridy=1;
 	}
 	
 	private class ButtonListener implements ActionListener
@@ -139,6 +124,8 @@ public class WarGUI extends JFrame
 		public void actionPerformed(ActionEvent arg0)
 		{
 			turns++;
+			p1Hand.setText(""+game.getP1().cardsLeft());
+			p2Hand.setText(""+game.getP2().cardsLeft());
 			if(!game.getWinner())
 			{
 				turnLabel.setText(""+turns);
@@ -160,7 +147,6 @@ public class WarGUI extends JFrame
 						flip.addToTop(game.war());
 						warStack1.setIcon(flip.getCard(0).getFront());
 						warStack2.setIcon(flip.getCard(1).getFront());
-						
 					}
 					else
 					{
@@ -186,19 +172,11 @@ public class WarGUI extends JFrame
 				p1Hand.setIcon(new ImageIcon());
 				flipButton.setEnabled(false);
 			}
-				
-			
 		}
-		
 	}
-	
-	
+   
 	public static void main(String[] args)
 	{
 		new WarGUI();
-
 	}
-
-	
-	
 }

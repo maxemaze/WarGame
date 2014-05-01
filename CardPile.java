@@ -1,5 +1,10 @@
-package hw10;
-
+/*
+ * Maxe Mazelis
+ * CS 110
+ * A CardPile which is made up of an ArrayList<Card> pile
+ * There are numerous constuctors and functions that allow the user to add and remove Cards from the pile.
+ */
+ 
 import java.util.ArrayList;
 
 public class CardPile

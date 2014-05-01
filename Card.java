@@ -1,5 +1,9 @@
-package hw10;
-
+/*
+ * Maxe Mazelis
+ * CS 110
+ * A Card object which has a rank, suit, and an ImageIcon for the front and back of the card.
+ */
+ 
 import javax.swing.ImageIcon;
 
 public class Card

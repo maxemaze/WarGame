@@ -1,20 +1,15 @@
-package hw10;
-
-import java.util.ArrayList;
-import java.util.Collections;
-
-import javax.swing.ImageIcon;
-
 /*
  * Maxe Mazelis
  * CS 110
- *
  */
+
+import java.util.ArrayList;
+import java.util.Collections;
+import javax.swing.ImageIcon;
 
 public class Deck extends CardPile
 {
-	public static final ImageIcon CARDBACK = new ImageIcon("src/hw10/pictures/back.jpg");
-
+	public static final ImageIcon CARDBACK = new ImageIcon("pix/back.jpg");
 	
 	/**
 	 * default constructor which creates a CardPile of 52 uniquely initialized Cards 
@@ -55,13 +50,13 @@ public class Deck extends CardPile
 			{
 				switch(i)
 				{
-					case 1: deck.add(new Card(i,j,new ImageIcon("src/hw10/pictures/"+j+"s.jpg"),CARDBACK));
+					case 1: deck.add(new Card(i,j,new ImageIcon("pix/"+j+"s.jpg"),CARDBACK));
 								break;
-					case 2: deck.add(new Card(i,j,new ImageIcon("src/hw10/pictures/"+j+"c.jpg"),CARDBACK));
+					case 2: deck.add(new Card(i,j,new ImageIcon("pix/"+j+"c.jpg"),CARDBACK));
 								break;
-					case 3: deck.add(new Card(i,j,new ImageIcon("src/hw10/pictures/"+j+"h.jpg"),CARDBACK));
+					case 3: deck.add(new Card(i,j,new ImageIcon("pix/"+j+"h.jpg"),CARDBACK));
 								break;
-					case 4: deck.add(new Card(i,j,new ImageIcon("src/hw10/pictures/"+j+"d.jpg"),CARDBACK));
+					case 4: deck.add(new Card(i,j,new ImageIcon("pix/"+j+"d.jpg"),CARDBACK));
 								break;
 				}
 				
